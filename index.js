@@ -27,20 +27,40 @@ var transporter = nodemailer.createTransport({
   }
 });
 
-var mailOptions = {
-  from: 'vkiss1993@gmail.com',
-  to: 'vkiss1993@gmail.com',
-  subject: 'Sending Email using Node.js',
-  text: 'That was easy!'
-};
 
-transporter.sendMail(mailOptions, function(error, info){
-  if (error) {
-    console.log(error);
-  } else {
-    console.log('Email sent: ' + info.response);
-  }
+
+app.post('/newsletter', (req, res) => {
+	const name = req.body.name;
+	const email = req.body.email;
+	const mailOptions = {
+	  from: 'vkiss1993@gmail.com',
+	  to: email,
+	  subject: 'Üdvözöllek Angyalföldi pihenő szigeten',
+	  text: 'Kedves ' + name + ' \n\nKöszöntelek Angyalföldi pihenő szigeten. Ezennel feliratkoztál a hírlevelemre.\n\nSzeretettel,\nVadász Szilvi'
+	};
+	transporter.sendMail(mailOptions, function(error, info){
+	  if (error) {
+	    res.status(500).send('Error');
+	  } else {
+	    console.log('Email sent: ' + info.response);
+	  }
+	});
+	const mailOptionsSzilvi = {
+	  from: 'vkiss1993@gmail.com',
+	  to: 'vszilvi78@gmail.com',
+	  subject: 'Új feliratkozó',
+	  text: '' + name + ' feliratkozott a hírlevélre. Email címe ' + email
+	};
+	transporter.sendMail(mailOptionsSzilvi, function(error, info){
+	  if (error) {
+	    res.status(500).send('Error');
+	  } else {
+	    res.status(200).send('POST request received successfully');
+	  }
+	});
 });
+
+
 
 server.listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
